@@ -12,7 +12,7 @@ def good(ch):
   return(True)
 url = ('http://newsapi.org/v2/top-headlines?'
        'country=us&'
-       'apiKey=3e8a3411185c4a1390e349eeb775fa7f')
+       'apiKey=your api key')
 response = requests.get(url)
 transformers_logger = logging.getLogger("transformers")
 transformers_logger.setLevel(logging.WARNING)
