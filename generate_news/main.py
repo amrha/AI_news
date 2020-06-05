@@ -19,7 +19,7 @@ transformers_logger.setLevel(logging.WARNING)
 args={}
 args["length"]=1000
 args["use_cuda"]=True
-myclient = pymongo.MongoClient("mongodb+srv://amrou:23856415@cluster0-k8dcj.gcp.mongodb.net/test?retryWrites=true&w=majority")
+myclient = pymongo.MongoClient("your mongodb")
 mydb = myclient["test"]
 mycol = mydb["news"]
 for count in (response.json())["articles"]:
