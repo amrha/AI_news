@@ -1,0 +1,123 @@
+<html>
+<head>
+	<title>The Garlic</title>
+	<script src="./vue.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<style type="text/css">
+		.header {
+  overflow: hidden;
+  background-color: rgba(255,255,255,0);
+  padding: 20px 10px;}
+		.footer {
+  overflow: hidden;
+  background-color: rgba(255,255,255,0);
+  padding: 40px 10px;}
+		.loader {
+			position: relative;
+			top: 50%;
+			left:50%;
+			transform: translate(-50%,-50%);
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			border:5px solid rgba(255,255,255,0.2);
+			border-top :5px solid #fff;
+			animation: animate 1.5s infinite linear;}
+@keyframes animate{
+	0%{transform : translate(-50%,-50%) rotate(0deg);}
+	100%{transform : translate(-50%,-50%) rotate(360deg);}}
+</style>
+</head>
+<body>
+	<div class="container-contact100" id="app" ref="ref1">
+		<table style="table-layout: fixed;width: 100%;" :key="page">
+			<tr><td colspan="2">
+				<div class="header">
+  					<h1 style="text-align: center;">The Garlic</h1>
+  					<p style="text-align: center;">Don't take these articles too seriously they are AI written</p>
+					<p style="text-align: center;">Built using <a href="https://newsapi.org/">NewsAPI</a> and <a href="https://github.com/ThilinaRajapakse/simpletransformers">simpletransformers</a></p>
+ 					<p style="text-align: center;">Contact : amrou.hajji@ensi-uma.tn</h1>
+				</div>
+			</td></tr>
+			<tr><td style="vertical-align: top;">
+				<table v-for="article in Pmessage">
+					<tr><td>
+						<div class="wrap-contact100" >
+							<span class="contact100-form-title">{{article.title}}</span>
+							<img v-bind:src="article.url" style="width: 100%;" /> 
+							<p>{{article.content}}</p>
+							<hr>
+							<p>{{article.by}} / {{article.time}}</p>
+						</div>
+					</td></tr>
+				</table>
+			</td><td style="vertical-align: top;">
+				<table v-for="article in Imessage">
+					<tr><td>
+						<div class="wrap-contact100" >
+							<span class="contact100-form-title">{{article.title}}</span>
+							<img v-bind:src="article.url" style="width: 100%;"/> 
+							<p>{{article.content}}</p>
+							<hr>
+							<p>{{article.by}} / {{article.time}}</p>
+						</div>
+					</td></tr>
+				</table>
+			</td></tr>
+			<tr><td colspan="2">
+				<div class="footer">
+					<div v-if="cond" class="loader" id="main-container"></button>
+				</div>
+			</td></tr>
+		</table>
+	</div>
+<script >
+new Vue({
+  el: '#app',
+    data () {
+    return {
+    	message : null,
+    	page : 0,
+    	temp : 0,
+    	cond : true,
+  		Pmessage :  [],
+  		Imessage : [],
+  		tempPmessage :  [],
+  		tempImessage : [],}},
+    mounted(){
+    	this.forceRerender();
+    	if (this.cond){
+    	this.cheking();}},
+    methods: {
+    	cheking : function(){if (this.cond){
+	window.addEventListener('scroll', () => {
+	var element = document.querySelector('#main-container');
+	var position = element.getBoundingClientRect();
+	if(position.top >= 0 && position.bottom <= window.innerHeight && this.temp==1) {
+		this.forceRerender();
+		this.temp=0;}
+		else if(!(position.top >= 0 && position.bottom <= window.innerHeight) && this.temp==0) {
+		this.temp=1;}});}},
+    forceRerender : function(){console.log(this.page);
+    	this.page=this.page+1;
+    	fetch('https://geting-news.herokuapp.com/')
+      .then(response => response.json())
+      .then((data) => {this.message=data.reverse();})
+      .then((data) => {for (var i = 10*this.page-10; i < Math.min(10*this.page,this.message.length); i++) {
+      	if (i%2==0 && !(this.message[i] in this.Pmessage) && !(this.message[i] in this.Imessage)) {this.Pmessage.push(this.message[i]);} else if (i%2==1 && !(this.message[i] in this.Imessage) && !(this.message[i] in this.Pmessage)) {this.Imessage.push(this.message[i]);}
+      }}).then((data) => {console.log(this.Pmessage.length);})
+      .then((data) => {if (10*this.page>this.message.length){this.cond=false;}})},}});
+</script>
+</body>
+</html>
